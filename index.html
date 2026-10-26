@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>灵犀互传 3.0 商用版 · 数字生态家园</title>
+<style>
+:root{color-scheme:dark;--bg:#1a1025;--gold:#f472b6;--gold-hi:#f9a8d4;--gold-deep:#c084fc;
+--grad:linear-gradient(135deg,#f472b6 0%,#c084fc 50%,#fbbf24 100%);
+--card:rgba(53,32,69,.50);--card-hi:rgba(120,60,160,.16);
+--border:rgba(192,132,252,.22);--border-hi:rgba(244,114,182,.55);--text:#f3edfa;--muted:#a99bc0}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%}
+body{background:var(--bg);color:var(--text);font-family:"HarmonyOS Sans SC","MiSans","PingFang SC","Microsoft YaHei",sans-serif;
+display:flex;flex-direction:column;overflow:hidden}
+.aurora{position:fixed;inset:0;z-index:-3;pointer-events:none;
+background:radial-gradient(60% 40% at 50% -5%,rgba(244,114,182,.16),transparent 60%),
+radial-gradient(40% 30% at 85% 20%,rgba(147,51,234,.14),transparent 65%),
+radial-gradient(35% 30% at 10% 30%,rgba(251,191,36,.07),transparent 60%)}
+.grid-bg{position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.22;
+background-image:linear-gradient(rgba(192,132,252,.07) 1px,transparent 1px),
+linear-gradient(90deg,rgba(244,114,182,.07) 1px,transparent 1px);background-size:56px 56px;
+mask-image:radial-gradient(75% 60% at 50% 0%,#000 30%,transparent 100%);
+-webkit-mask-image:radial-gradient(75% 60% at 50% 0%,#000 30%,transparent 100%)}
+.topbar{flex-shrink:0;backdrop-filter:blur(14px);background:rgba(26,16,37,.72);
+border-bottom:1px solid var(--border);z-index:9}
+.inner{display:flex;align-items:center;gap:18px;height:60px;width:min(1620px,94%);margin:0 auto}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--text);flex-shrink:0}
+.mark{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:10px;
+font-size:18px;font-weight:700;background:var(--grad);color:#2a1035;box-shadow:0 0 18px rgba(244,114,182,.45)}
+.bname{font-size:17px;font-weight:700;letter-spacing:1px;background:var(--grad);
+-webkit-background-clip:text;background-clip:text;color:transparent}
+.chip{font-size:11px;color:var(--muted);border:1px solid var(--border);padding:2px 8px;border-radius:20px}
+.nav{display:flex;gap:4px;flex:1;flex-wrap:wrap}
+.nav a{padding:8px 14px;border-radius:10px;font-size:14px;color:var(--muted);text-decoration:none;transition:.18s}
+.nav a:hover{color:var(--gold-hi);background:var(--card-hi)}
+.nav a.on{color:var(--gold-hi);background:var(--card-hi);box-shadow:inset 0 0 0 1px var(--border)}
+.stage{flex:1;min-height:0;position:relative}
+.stage iframe{width:100%;height:100%;border:0;display:block;background:#0d1220}
+.foot{flex-shrink:0;border-top:1px solid var(--border);background:rgba(26,16,37,.72);
+padding:10px 0;font-size:12px;color:var(--muted);text-align:center;line-height:1.8}
+.foot b{color:var(--gold-hi);font-weight:600}
+.foot a{color:var(--muted);text-decoration:none}
+@media(max-width:760px){.inner{height:auto;padding:6px 0;flex-wrap:wrap;gap:10px}.chip{display:none}
+.nav{display:none}.bname{font-size:15px}.mark{width:30px;height:30px;font-size:16px}
+.foot{padding:5px 8px;font-size:10px;line-height:1.4;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}}
+</style></head><body>
+<div class="aurora"></div><div class="grid-bg"></div>
+<header class="topbar"><div class="inner">
+<a class="brand" href="https://ecojia.cn"><span class="mark">家</span><span class="bname">数字生态家园</span><span class="chip">ecojia.cn</span></a>
+<nav class="nav">
+<a href="https://ecojia.cn">门户首页</a>
+<a href="https://tools.ecojia.cn/">工具中心</a>
+<a class="on" href="https://tools.ecojia.cn/lan-share-hub-pro/">灵犀互传 3.0</a>
+<a href="https://ziliao.ecojia.cn">资料百事通</a>
+<a href="https://ecojia.cn/wishes">许愿墙</a>
+</nav>
+</div></header>
+<main class="stage"><iframe id="appFrame" title="灵犀互传 3.0 商用版" allow="clipboard-write; fullscreen; camera; microphone; display-capture"></iframe></main>
+<script>
+// 版本号防缓存 + 透传外壳 URL 查询参数（如 ?room=xxx）给内嵌应用
+document.getElementById('appFrame').src = 'app.html?v=20261026p3' + (location.search ? '&' + location.search.slice(1) : '');
+</script>
+<footer class="foot">作者：<b>军哥懂保</b>（微信：<b>xunijiayuan</b>） ・ 数字生态家园 · <b>灵犀互传 3.0 商用版</b>
+&nbsp;|&nbsp; <a href="https://beian.miit.gov.cn" target="_blank" rel="noopener">蜀ICP备2025124820号-2</a></footer>
+  <script src="/eco-bar.js?v=20261026c" defer></script>
+</body></html>

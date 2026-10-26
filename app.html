@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>灵犀互传 3.0 商用版 · 互传互看 · 主播模式</title>
+<link rel="stylesheet" href="style.css?v=20261026p3">
+</head>
+<body>
+<div class="bg-glow"></div>
+
+<!-- 顶部栏 -->
+<header class="topbar">
+  <div class="brand">
+    <div class="logo">灵</div>
+    <div>
+      <h1>灵犀互传 <em class="ver-tag">3.0</em></h1>
+      <p class="subtitle">商用版 · 互传资料 · 同屏互看 · 主播模式 · 远程协助</p>
+    </div>
+  </div>
+  <div class="conn-status">
+    <div class="conn-dot" id="connDot"></div>
+    <span id="connText">连接中...</span>
+  </div>
+  <div class="top-right">
+    <div class="vip-badge" id="vipBadge" title="VIP会员：激活后解锁 远程声音 / 远程控制 / 多人连线 / 录屏录音 / 全屏横竖 / 服务器缓存">👑 <span id="vipBadgeText">激活VIP</span></div>
+    <div class="room-box" id="roomBox" title="当前房间">
+      <span class="room-label">房间</span>
+      <span class="room-value" id="roomValue">公共大厅</span>
+      <button class="mini-btn" id="roomSwitchBtn" title="切换房间：输入相同房间码的设备才能互相看到、互传文件">⇄</button>
+    </div>
+    <div class="addr-stack">
+      <div class="addr-box" id="addrBox" title="点击复制分享地址">
+        <span class="addr-label">分享地址</span>
+        <span class="addr-value" id="addrValue">--</span>
+      </div>
+      <a class="apk-card" id="apkCard" href="native/lanhub.apk" download title="推荐安装手机端 APK：原生通道可共享屏幕、可被远程控制">
+        <span class="apk-ico">📱</span>
+        <span class="apk-txt">
+          <b>手机端 APK v3.0.0</b>
+          <small>更新 2026-10-26 · 推荐安装</small>
+        </span>
+      </a>
+      <a class="pc-card" id="pcCard" href="native/lanhub-companion.zip" download title="电脑端伴侣：安装后电脑可被远程控制（浏览器本身受安全限制无法被控）">
+        <span class="pc-ico">💻</span>
+        <span class="pc-txt"><b>电脑端伴侣 v3.0.0</b><small>电脑可被远程控制</small></span>
+      </a>
+    </div>
+    <button class="help-fab" id="glossaryBtn" title="名词解析（大白话）">?</button>
+  </div>
+</header>
+
+<main class="layout">
+
+  <!-- 左栏：在线设备 -->
+  <aside class="panel device-panel active" data-panel="devices">
+    <div class="panel-title">
+      <span class="icon">◉</span> 在线设备
+      <span class="badge" id="peerCount">0</span>
+    </div>
+    <div class="my-card">
+      <div class="my-label">本机 <span class="dev-type" id="myType">💻 电脑</span></div>
+      <div class="my-name-row">
+        <span id="myName">我的设备</span>
+        <span class="role-chip hidden" id="myRoleBadge"></span>
+        <button class="mini-btn" id="renameBtn" title="修改设备名">✎</button>
+      </div>
+      <div class="my-ip" id="myIp">--</div>
+    </div>
+    <div class="my-settings">
+      <label class="switch-row" title="收到呼叫/查看请求时无需手动点接受，直接接通（自用模式，3.0 默认开启）">
+        <span>自动应答</span>
+        <span class="switch"><input type="checkbox" id="autoAnswerToggle" checked><i></i></span>
+      </label>
+      <label class="switch-row" title="收到文件时不弹询问，直接接收并自动下载（3.0 默认开启）">
+        <span>自动收文件</span>
+        <span class="switch"><input type="checkbox" id="autoFileToggle" checked><i></i></span>
+      </label>
+      <label class="switch-row" title="提前共享本机屏幕并保持待命：别人点「看TA屏幕」立即看到，无需再选屏（浏览器限制：首次开启需手选一次屏幕）">
+        <span>屏幕待命</span>
+        <span class="switch"><input type="checkbox" id="screenStandbyToggle"><i></i></span>
+      </label>
+      <label class="switch-row vip-row" title="VIP：共享屏幕/摄像头时同步传输本机麦克风和系统扬声器声音，对方默认能听到（可关）。即时生效">
+        <span>声音 <em class="vip-tag">VIP</em></span>
+        <span class="switch"><input type="checkbox" id="soundToggle" checked><i></i></span>
+      </label>
+      <label class="switch-row vip-row" title="VIP：允许对方远程操作本机（手机被控需安装灵犀互传 APK 3.0 并开启无障碍服务；电脑被控需安装电脑端伴侣；纯网页标签页受浏览器沙箱限制无法被控）">
+        <span>允许远程控制 <em class="vip-tag">VIP</em></span>
+        <span class="switch"><input type="checkbox" id="allowCtlToggle"><i></i></span>
+      </label>
+      <label class="switch-row" title="房间里已有主播时，进入房间自动观看主播屏幕并听声音（3.0 默认开启）">
+        <span>自动看主播</span>
+        <span class="switch"><input type="checkbox" id="anchorWatchToggle" checked><i></i></span>
+      </label>
+    </div>
+
+    <!-- 主播模式 -->
+    <div class="anchor-box" id="anchorBox">
+      <div class="anchor-head">
+        <span class="anchor-title">🎙 主播模式</span>
+        <span class="anchor-state" id="anchorState">观众</span>
+      </div>
+      <div class="anchor-actions">
+        <button class="btn ghost" id="anchorApplyBtn" title="向房主申请成为主播：批准后房间里所有人都能看到你的屏幕并听到你的声音">申请成为主播</button>
+        <button class="btn primary hidden" id="anchorLiveBtn" title="主播开播：共享本机屏幕+声音，房间内所有人自动观看">▶ 开始直播</button>
+        <button class="btn ghost danger hidden" id="anchorQuitBtn" title="退出主播身份并停止直播">退出主播</button>
+      </div>
+      <div class="anchor-pending hidden" id="anchorPending">
+        <div class="ap-text" id="anchorPendingText">--</div>
+        <div class="ap-actions">
+          <button class="btn accept" id="anchorAllowBtn">同意</button>
+          <button class="btn danger" id="anchorDenyBtn">拒绝</button>
+        </div>
+      </div>
+      <div class="anchor-tip" id="anchorTip">房主 = 第一个进入房间的人，负责审批主播。主播开播后，进入房间的人会自动看到主播屏幕并听到主播声音。</div>
+    </div>
+
+    <div class="help-tip collapsed" id="helpTip">
+      <div class="help-title" id="helpTitle"><span class="help-ico">💡</span> 使用指引 <span class="help-arrow" id="helpArrow">▸</span></div>
+      <ul id="helpBody">
+        <li><b>电脑看手机屏幕：</b>手机端开启「屏幕待命」→ 电脑端点该设备「◘ 看TA屏幕」</li>
+        <li><b>同屏共看（3.0）：</b>可同时看对方摄像头和屏幕，看屏幕时摄像头自动缩到右下角小窗，互不遮挡</li>
+        <li><b>视频通话：</b>双方均需允许摄像头权限，点「◈ 视频通话」即可双向通话</li>
+        <li><b>互传文件：</b>选择目标设备 → 拖拽或选择文件，P2P 直传不限大小</li>
+        <li><b>文件缓存（VIP）：</b>发送完成后文件在服务器临时保存 10 分钟，房间里任何人可凭聊天里的链接重复下载</li>
+        <li><b>主播模式（3.0）：</b>第一个进房的人是房主，可把成员设为主播；主播点「开始直播」，其他人进房自动观看</li>
+        <li><b>远程控制：</b>手机需装 APK 3.0 并开启无障碍服务；电脑需装电脑端伴侣；被控方「允许远程控制」需开启</li>
+        <li><b>全屏/横竖：</b>画面右上角 ⛶ 全屏（手机端已适配）、⟳ 横竖切换</li>
+        <li><b>消息记录：</b>点消息区右上角「⇩TXT」可导出全部聊天记录到本机</li>
+        <li><b>华为/鸿蒙手机共享屏幕：</b>系统限制浏览器无法共享，装 <a class="apk-link" href="native/lanhub.apk" download>灵犀互传 APK</a> 后走原生通道共享</li>
+      </ul>
+    </div>
+    <ul class="peer-list" id="peerList">
+      <li class="empty-tip">当前房间暂无其他设备…<br><small>其他设备打开分享地址（相同房间码）即可互见</small></li>
+    </ul>
+  </aside>
+
+  <!-- 中栏：视频区 -->
+  <section class="panel video-panel" data-panel="video">
+    <div class="panel-title">
+      <span class="icon">◈</span> 视频互看
+      <div class="title-actions">
+        <button class="btn ghost" id="localCamBtn">▶ 本机预览</button>
+        <button class="btn ghost danger hidden" id="stopLocalBtn">■ 关闭预览</button>
+      </div>
+    </div>
+
+    <div class="video-stage" id="videoStage">
+      <div class="video-placeholder" id="videoPlaceholder">
+        <div class="ph-icon">📷</div>
+        <p>选择左侧设备发起「看看TA」「看TA屏幕」或「视频通话」</p>
+        <p class="ph-sub">3.0 支持同时观看摄像头 + 屏幕，摄像头自动缩到右下角小窗</p>
+      </div>
+      <div class="remote-grid" id="remoteGrid"></div>
+      <video id="localVideo" autoplay playsinline muted class="local-video hidden"></video>
+      <div class="video-status" id="videoStatus"></div>
+    </div>
+
+    <div class="call-controls">
+      <button class="btn ghost vip-feat hidden" id="recScreenBtn" title="VIP：录制对方画面+声音，再点一次停止并保存">⏺ 录屏</button>
+      <button class="btn ghost vip-feat hidden" id="recAudioBtn" title="VIP：只录制对方声音，再点一次停止并保存">🎙 录音</button>
+      <button class="btn danger hidden" id="hangupBtn">✕ 挂断全部</button>
+    </div>
+
+    <!-- 来电弹条 -->
+    <div class="incoming-bar hidden" id="incomingBar">
+      <div class="inc-text" id="incomingText">对方请求视频通话</div>
+      <button class="btn accept" id="acceptBtn">✓ 接受</button>
+      <button class="btn danger" id="rejectBtn">✕ 拒绝</button>
+    </div>
+
+    <!-- 文件接收询问弹条 -->
+    <div class="incoming-bar file-bar hidden" id="fileIncomingBar">
+      <div class="inc-text" id="fileIncomingText">对方想发送文件给你</div>
+      <button class="btn accept" id="fileAcceptBtn">✓ 接收</button>
+      <button class="btn danger" id="fileRejectBtn">✕ 拒收</button>
+    </div>
+
+    <!-- 聊天小窗 -->
+    <div class="chat-box">
+      <div class="panel-title small">
+        <span class="icon">✎</span> 消息记录
+        <span class="chat-count" id="chatCount">0 条</span>
+        <button class="mini-btn export-btn" id="exportChatBtn" title="导出全部消息记录为 TXT 文件">⇩ TXT</button>
+      </div>
+      <div class="chat-log" id="chatLog"></div>
+      <div class="chat-input-row">
+        <select id="chatTarget" class="chat-target"><option value="">选择设备…</option></select>
+        <input type="text" id="chatInput" placeholder="输入消息，回车发送…">
+        <button class="btn primary" id="chatSendBtn">发送</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- 右栏：文件互传 -->
+  <aside class="panel file-panel" data-panel="files">
+    <div class="panel-title"><span class="icon">⇅</span> 资料互传</div>
+
+    <div class="drop-zone" id="dropZone">
+      <div class="dz-icon">⬆</div>
+      <p>拖拽文件到这里发送</p>
+      <p class="dz-sub">或</p>
+      <button class="btn primary" id="pickFileBtn">选择文件</button>
+      <input type="file" id="fileInput" multiple hidden>
+    </div>
+
+    <div class="send-target">
+      <label>发送到：</label>
+      <select id="fileTarget"><option value="">选择设备…</option></select>
+    </div>
+
+    <div class="transfer-list" id="transferList"></div>
+
+    <div class="panel-title small" style="margin-top:14px">
+      <span class="icon">▤</span> 收到的文件
+      <button class="mini-btn" id="refreshFilesBtn" title="刷新">⟳</button>
+    </div>
+    <ul class="recv-list" id="recvList"></ul>
+    <div class="cache-note vip-row-tip">VIP：发送完成的文件自动缓存 10 分钟，可在消息记录里复制下载链接</div>
+  </aside>
+</main>
+
+<!-- 远程桌面全屏控制窗口 -->
+<div class="rdp-modal hidden" id="rdpModal">
+  <div class="rdp-header">
+    <span class="rdp-dot"></span>
+    <span id="rdpTitle">远程桌面</span>
+    <span class="rdp-fps" id="rdpFps"></span>
+    <span class="flex-spacer"></span>
+    <span class="rdp-tip-inline">鼠标移动/点击即控制对方 · 键盘直接输入 · 手势会实时高亮显示</span>
+    <button class="btn danger" id="rdpCloseBtn">✕ 断开连接</button>
+  </div>
+  <div class="rdp-body" id="rdpBody">
+    <div class="rdp-loading" id="rdpLoading">
+      <div class="ph-icon">🖥</div>
+      <p>正在连接对方桌面…</p>
+    </div>
+    <img id="rdpScreen" draggable="false" alt="">
+    <div class="rdp-cursor hidden" id="rdpCursor"></div>
+    <div class="rdp-actions" id="rdpActions"></div>
+  </div>
+</div>
+
+<!-- VIP 激活弹窗 -->
+<div class="room-modal hidden" id="vipModal">
+  <div class="room-card vip-card">
+    <div class="room-card-title">👑 激活 VIP 会员 · 3.0</div>
+    <p class="room-card-tip">VIP 解锁全部高级能力：<br>🔊 远程声音（麦克风+扬声器） · 🖱 远程控制（鼠标+键盘+手势）<br>👥 多人同时连线分格看 · ⏺ 录屏 / 🎙 录音 · ⛶ 全屏与横竖切换<br>📦 文件服务器缓存 10 分钟<br><br>激活码请联系作者 <b>军哥懂保</b>（微信：xunijiayuan）获取</p>
+    <input type="text" id="vipInput" maxlength="32" placeholder="输入激活码" autocomplete="off">
+    <div class="room-card-actions">
+      <button class="btn ghost" id="vipCancelBtn">取消</button>
+      <button class="btn primary" id="vipConfirmBtn">立即激活</button>
+    </div>
+  </div>
+</div>
+
+<!-- 房间切换弹窗 -->
+<div class="room-modal hidden" id="roomModal">
+  <div class="room-card">
+    <div class="room-card-title">⇄ 切换房间</div>
+    <p class="room-card-tip">输入相同房间码的设备才能互相看到、互传文件<br>留空或输入 public 回到公共大厅</p>
+    <input type="text" id="roomInput" maxlength="32" placeholder="房间码：字母/数字/短横线，最长32位" autocomplete="off">
+    <div class="room-card-actions">
+      <button class="btn ghost" id="roomPublicBtn">公共大厅</button>
+      <button class="btn ghost" id="roomCancelBtn">取消</button>
+      <button class="btn primary" id="roomConfirmBtn">进入房间</button>
+    </div>
+  </div>
+</div>
+
+<!-- 名词解析（大白话） -->
+<div class="room-modal hidden" id="glossaryModal">
+  <div class="room-card glossary-card">
+    <div class="room-card-title">❓ 名词解析（大白话）</div>
+    <dl class="glossary">
+      <dt>P2P 直传</dt><dd>两台设备直接连线传文件，不经过服务器中转，所以不限大小、也不占服务器带宽。</dd>
+      <dt>WebRTC</dt><dd>浏览器自带的实时音视频技术，相当于给两台设备拉了一条「专用视频电话线」。</dd>
+      <dt>画中画（PiP）</dt><dd>看对方屏幕时，对方摄像头画面自动缩到右下角的小窗口，不挡住主画面。</dd>
+      <dt>屏幕待命</dt><dd>提前把自己的屏幕共享好并保持待命，别人点「看TA屏幕」时秒接通，不用再选一次屏幕。</dd>
+      <dt>主播模式</dt><dd>房间里第一个进来的人是「房主」，负责批准谁能当主播；主播开播后，进房的人自动看到主播画面、听到主播声音。</dd>
+      <dt>无障碍服务</dt><dd>安卓系统给App的「代替手指点屏幕」权限。手机要被人远程操作，必须开启它。</dd>
+      <dt>电脑端伴侣</dt><dd>电脑上安装的小程序，负责把电脑屏幕发出去并接受鼠标键盘操作；浏览器本身受安全限制，不能直接被控。</dd>
+      <dt>服务器缓存</dt><dd>文件先临时存到服务器 10 分钟，对方没在线也能稍后凭链接下载，过期自动删除。</dd>
+      <dt>VIP</dt><dd>商用版会员：解锁声音、远程控制、多人连线、录屏录音、全屏横竖、文件缓存等高级能力。</dd>
+    </dl>
+    <div class="room-card-actions"><button class="btn primary" id="glossaryCloseBtn">明白了</button></div>
+  </div>
+</div>
+
+<!-- 底部信息条：程序大小 / 上次保存 / 历史操作 / 作者 -->
+<footer class="app-foot">
+  <span id="progVer">版本: 3.0.0 商用版</span>
+  <span class="sep">|</span>
+  <span id="progSize">程序大小: --</span>
+  <span class="sep">|</span>
+  <span id="progTime">上次保存: --</span>
+  <span class="sep">|</span>
+  <span id="footStats" title="最近操作记录">历史操作: 0 条</span>
+  <span class="flex-spacer"></span>
+  <span>作者: 军哥懂保（微信: xunijiayuan）</span>
+</footer>
+
+<!-- 手机端底部导航（桌面端隐藏） -->
+<nav class="mobile-tabs">
+  <button data-tab="devices" class="on"><span class="tab-ico">◉</span>设备</button>
+  <button data-tab="video"><span class="tab-ico">◈</span>互看</button>
+  <button data-tab="files"><span class="tab-ico">⇅</span>互传</button>
+</nav>
+
+<script src="app.js?v=20261026p3"></script>
+  <script src="/eco-bar.js?v=20261026c" defer></script>
+</body>
+</html>
